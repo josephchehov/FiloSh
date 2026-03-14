@@ -30,3 +30,5 @@ if __name__ == "__main__":
     widget.show()
 
     sys.exit(app.exec())
+
+### MAIN CLASS - THIS WONT BE UPDATED UNTIL AFTER DEFAULT CLASS SETUP IS DONE IN 'logic.py' FILE
