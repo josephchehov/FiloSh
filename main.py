@@ -1,4 +1,5 @@
 import sys
+import os
 import random
 from terminal import Window
 from PySide6 import QtCore, QtWidgets, QtGui
