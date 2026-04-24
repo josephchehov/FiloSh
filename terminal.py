@@ -30,9 +30,14 @@ class Titlebar(QWidget):
         self.minimize_button.setIcon(QtGui.QIcon("images/minimize.png"))
         self.maximize_button.setIcon(QtGui.QIcon("images/maximize.png"))
         self.close_button.setIcon(QtGui.QIcon("images/close.png"))
+        self.minimize_button.setToolTip("Minimize")
+        self.maximize_button.setToolTip("Maximize")
+        self.close_button.setToolTip("Close")
         
         for btn in (self.minimize_button, self.maximize_button, self.close_button):
             btn.setFixedSize(30,30)
+            btn.setAttribute(QtCore.Qt.WidgetAttribute.WA_NoMousePropagation)
+            btn.installEventFilter(self)
             
         self.minimize_button.setStyleSheet("""
             QPushButton {background-color: #363636; color: black; border: none;}
@@ -53,7 +58,7 @@ class Titlebar(QWidget):
         self.maximize_button.clicked.connect(self.toggle_max_restore)
         self.close_button.clicked.connect(self.parent.close)
 
-        #- adding
+        #- applying widgets on screen
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0,0,0,0)
         layout.setSpacing(0)
@@ -65,23 +70,44 @@ class Titlebar(QWidget):
         layout.addWidget(self.maximize_button)
         layout.addWidget(self.close_button)
 
-        #- title bar position controllers
+        #- title bar movement
         self.start_pos = None
         self.dragging = False
 
     def toggle_max_restore(self):
-        if self.parent.isMaximized():
-            self.parent.showNormal()
+        if self.parent.is_maximized:
+            if self.parent.normal_geometry:
+                self.parent.setGeometry(self.parent.normal_geometry)
+            self.parent.is_maximized = False
+            self.close_button.setStyleSheet("""
+                QPushButton {background-color: #363636; color: black; border: none; border-top-right-radius: 10px;}
+                QPushButton:hover {background-color: #8F0D00; border-top-right-radius: 10px;}
+            """)
         else:
-            self.parent.showMaximized()
+            self.parent.normal_geometry = self.parent.geometry()
+            screen = QtWidgets.QApplication.screenAt(self.parent.pos())
+            self.parent.setGeometry(screen.availableGeometry())
+            self.parent.is_maximized = True
+            self.close_button.setStyleSheet("""
+                QPushButton {background-color: #363636; color: black; border: none; border-top-right-radius: 0px;}
+                QPushButton:hover {background-color: #8F0D00; border-top-right-radius: 0px;}
+            """)
+        
+        self.parent.update()
+        self.update()
     
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
-            if self.childAt(event.pos()) in (self.title_label, None):
+            child = self.childAt(event.pos())
+            blocked = (self.maximize_button, self.minimize_button, self.close_button)
+
+            button_area_start = self.minimize_button.x()
+            if child not in blocked and event.pos().x() < button_area_start:
                 self.start_pos = event.globalPosition().toPoint()
                 self.dragging = True
             else:
                 self.dragging = False
+                self.start_pos = None
     
     def mouseMoveEvent(self, event):
         if self.start_pos and event.buttons() == Qt.LeftButton:
@@ -94,9 +120,11 @@ class Titlebar(QWidget):
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
         painter.setBrush(QtGui.QColor("#363636"))
         painter.setPen(QtCore.Qt.PenStyle.NoPen)
-    
-        rect = QtCore.QRectF(0, 0, self.width(), self.height() + 10)
-        painter.drawRoundedRect(rect, 10, 10)
+
+        if self.parent.is_maximized:
+            painter.drawRect(QtCore.QRectF(0, 0, self.width(), self.height()))
+        else:
+            painter.drawRoundedRect(QtCore.QRectF(0, 0, self.width(), self.height()+10), 10, 10)
 
 class Window(QWidget):
     def __init__(self):
@@ -104,6 +132,8 @@ class Window(QWidget):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Window)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setMinimumSize(700,450)
+        self.is_maximized = False
+        self.normal_geometry = None
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0,0,0,0)
@@ -119,8 +149,10 @@ class Window(QWidget):
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
-
-        rect = QtCore.QRectF(self.rect())
         painter.setBrush(QtGui.QColor("#1e1e1e"))
         painter.setPen(QtCore.Qt.PenStyle.NoPen)
-        painter.drawRoundedRect(rect, 10, 10)
+
+        if self.is_maximized:
+            painter.drawRect(QtCore.QRectF(0, 0, self.width(), self.height()))
+        else:
+            painter.drawRoundedRect(QtCore.QRectF(0, 0, self.width(), self.height()), 10, 10)

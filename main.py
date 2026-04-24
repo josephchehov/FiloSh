@@ -1,8 +1,6 @@
 import sys
-import os
-import random
 from terminal import Window
-from PySide6 import QtCore, QtWidgets, QtGui
+from PySide6 import QtWidgets, QtCore
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
