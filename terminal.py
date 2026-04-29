@@ -1,7 +1,8 @@
-import sys
-from PySide6.QtCore import Qt, QPoint
+import time
+import os
+from PySide6.QtCore import Qt
 from PySide6 import QtGui, QtCore, QtWidgets
-from PySide6.QtWidgets import QWidget, QApplication, QHBoxLayout, QVBoxLayout, QPushButton, QLabel
+from PySide6.QtWidgets import QWidget, QPlainTextEdit, QHBoxLayout, QVBoxLayout, QPushButton, QLabel
 
 class Titlebar(QWidget):
     def __init__(self, parent=None):
@@ -142,17 +143,73 @@ class Window(QWidget):
         self.titlebar = Titlebar(self)
         layout.addWidget(self.titlebar)
 
-        content = QLabel("Placeholder")
-        content.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(content)
+        #- Input & Output
+        self.output = QtWidgets.QTextEdit(readOnly=True)
+        self.output.setStyleSheet("""
+                                QTextEdit {
+                                    background-color: #0F0F0F;
+                                    color: white;
+                                    border: 0px;
+                                    padding-left: 30px;
+                                    padding-right: 30px;
+                                    padding-top: 10px;
+                                    padding-bottom: 10px;
+                                    font-family: Monoscape;
+                                    font-size: 13px;
+                                }
+                            """)
+
+        self.input_cmd = QtWidgets.QLineEdit()
+        self.input_cmd.setStyleSheet("""
+                                QLineEdit {
+                                    background-color: black;
+                                    color: white;
+                                    outline:  none;
+                                    border: 3px solid #1A1A1A;
+                                    border-radius: 5px;
+                                    padding-left: 12px;
+                                    padding-right: 12px;
+                                }
+                                QLineEdit:focus {
+                                    border: 3px solid #1A1A1A;
+                                }
+                            """)
+        self.input_font = QtGui.QFont("Lucida Console, 18")
+        self.input_font.setBold(False)
+        self.input_cmd.setFont(self.input_font)
+        self.input_cmd.setFixedHeight(48)
+        self.input_cmd.setContentsMargins(15, 0, 15, 15)
+
+        self.input_cmd.returnPressed.connect(self.handle_command)
+
+        self.input_layout = QtWidgets.QHBoxLayout()
+        self.input_layout.addWidget(self.input_cmd)
+
+        layout.addWidget(self.output)
+        layout.addLayout(self.input_layout)
+
+        #- On bootup
+        date = str(time.localtime().tm_mday) + "/" + str(time.localtime().tm_mon) + "/" + str(time.localtime().tm_year)
+        time_current = str(time.localtime().tm_hour) + ":" + str(time.localtime().tm_min) + "." + str(time.localtime().tm_sec)
+        self.output.append("|-- <b>FILOSH v1.0</b> --|")
+        self.output.append(f"session started on {date} at {time_current}<br>")
+        self.output.append("!! Type <b>help</b> for a list of commands !!")
+        self.output.append("----------------------------------------------<br>")
 
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
         painter.setRenderHint(QtGui.QPainter.RenderHint.Antialiasing)
-        painter.setBrush(QtGui.QColor("#1e1e1e"))
+        painter.setBrush(QtGui.QColor("#0F0F0F"))
         painter.setPen(QtCore.Qt.PenStyle.NoPen)
 
         if self.is_maximized:
             painter.drawRect(QtCore.QRectF(0, 0, self.width(), self.height()))
         else:
             painter.drawRoundedRect(QtCore.QRectF(0, 0, self.width(), self.height()), 10, 10)
+
+    def handle_command(self):
+        command = self.input_cmd.text()
+
+        if len(command) > 0:
+            self.output.append(f"{os.getcwd()}$: {command}")
+            self.input_cmd.clear()
