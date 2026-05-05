@@ -1,8 +1,9 @@
 import time
+import parser
 import os
 from PySide6.QtCore import Qt
 from PySide6 import QtGui, QtCore, QtWidgets
-from PySide6.QtWidgets import QWidget, QPlainTextEdit, QHBoxLayout, QVBoxLayout, QPushButton, QLabel
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLabel
 
 class Titlebar(QWidget):
     def __init__(self, parent=None):
@@ -180,7 +181,7 @@ class Window(QWidget):
         self.input_cmd.setFixedHeight(48)
         self.input_cmd.setContentsMargins(15, 0, 15, 15)
 
-        self.input_cmd.returnPressed.connect(self.handle_command)
+        self.input_cmd.returnPressed.connect(self.input_processing)
 
         self.input_layout = QtWidgets.QHBoxLayout()
         self.input_layout.addWidget(self.input_cmd)
@@ -207,9 +208,12 @@ class Window(QWidget):
         else:
             painter.drawRoundedRect(QtCore.QRectF(0, 0, self.width(), self.height()), 10, 10)
 
-    def handle_command(self):
-        command = self.input_cmd.text()
+    def input_processing(self):
+        line = 1 #- implementing later on
+        user_in = self.input_cmd.text()
 
-        if len(command) > 0:
-            self.output.append(f"{os.getcwd()}$: {command}")
+        if len(user_in) > 0:
+            parsed = parser.command_parser.parse(self, user_in)
+            self.output.append(f"{os.getcwd()}$: {parsed}")
             self.input_cmd.clear()
+            line += 1
