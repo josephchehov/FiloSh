@@ -131,6 +131,7 @@ class Titlebar(QWidget):
 class Window(QWidget):
     def __init__(self):
         super().__init__()
+        self.parser = parser.command_parser()
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Window)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setMinimumSize(700,450)
@@ -213,7 +214,7 @@ class Window(QWidget):
         user_in = self.input_cmd.text()
 
         if len(user_in) > 0:
-            parsed = parser.command_parser.parse(self, user_in)
+            parsed = self.parser.parse(user_in)
             self.output.append(f"{os.getcwd()}$: {parsed}")
             self.input_cmd.clear()
             line += 1
