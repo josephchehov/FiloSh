@@ -1,8 +1,9 @@
 import re
+import os
 
 class command_parser:
     def parse(self, raw):
-        self.parsed = raw
+        self.plain = raw
         self.flags = {
             "-home": ["prdir"],
             "-work": ["prdir"],
@@ -15,7 +16,6 @@ class command_parser:
             "-base": ["time"],
             "-acpt": ["time"]
         }
-        self.content = ["string", "command"]
         self.commands = {
             "prdir": [[1], "flag"],
             "chdir": [[1], "path"],
@@ -24,7 +24,7 @@ class command_parser:
             "delete": [[1,2], "file", "flag"],
             "copy": [[2], "file", "path"],
             "move": [[2], "file", "path"],
-            "write": [[3], "file", "content", "flag"],
+            "write": [[3], "file", "string", "flag"],
             "log": [[0,1], "path"],
             "history": [[1], "command"],
             "clear": [[0]],
@@ -38,33 +38,55 @@ class command_parser:
 
 
     def split_string(self):
-        self.separate = re.findall(r'\[.*?\]|".*?"|-\w+|[\w./\\]+', self.parsed)
-        self.size_ref = self.commands.get(self.separate[0])
+        self.separate = re.findall(r'\[.*?\]|".*?"|-\w+|[\w./\\]+', self.plain)
+        self.cmd = self.separate[0]
+        self.command_ref = self.commands.get(self.separate[0])
 
-        if self.size_ref == None: #- command not found
+        if self.command_ref == None: #- command not found
             return print(f"Unrecognized command '{self.separate[0]}'. Use help for a list of working commands.")
-        if len(self.separate) == len(self.size_ref): #- process command type
-            if len(self.separate) <= 1: #- No argument commands
+        if len(self.separate) == len(self.command_ref) and (len(self.separate)-1 in (self.command_ref[0])): #- process command type
+            if len(self.separate) <= 1: #- No argument command found
                 return self.separate[0]
-            else:
-                if self.separate[1] == "flag":
-                    self.checktype_flag()
-                elif self.separate[1] == "file":
-                    self.checktype_file()
-                elif self.separate[1] == "path":
-                    self.checktype_path()
-                elif self.separate[1] == "command":
-                    self.checktype_command()
+            else: #- command word & arguments are formatted correctly
+                for i in range(1, len(self.separate)):
+                    if self.command_ref[i] == "flag":
+                        self.checktype_flag(i)
+                    elif self.command_ref[i] == "file":
+                        self.checktype_file(i)
+                    elif self.command_ref[i] == "path":
+                        self.checktype_path(i)
+                    elif self.command_ref[i] == "string":
+                        self.checktype_string(i)
+                    elif self.command_ref[i] == "command":
+                        self.checktype_command(i)
+                    else:
+                        self.checktype_value(i)
+        return self.plain
+
+    def checktype_flag(self, index):
+        if self.separate[index] in self.flags: #- flag exists
+            if self.cmd in self.flags.get(self.separate[index]): #- flag matches command
+                    return True
+        return False
+    
+    def checktype_file(self, index):
+        self.local_files = os.listdir(os.getcwd())
+        if self.separate[index] in self.local_files: #- file found in current working directory
+            return True
+        return False
+    
+    def checktype_string(self, index):
+        if self.separate[index].startswith('"') and self.separate[index].endswith('"'):
+            content = self.separate[index][1:-1]
+            if '"' not in content: #- correctly formatted string
+                return True
+        return False
+    
+    def checktype_command(self, index): #- implementing command entry validation later
         return
 
-    def checktype_flag(self):
-        return
+    def checktype_value(self, index):
+        return self.separate[index].isdigit()
     
-    def checktype_file(self):
-        return
-    
-    def checktype_command(self):
-        return
-    
-    def checktype_path(self):
-        return
+    def checktype_path(self, index):
+        return os.path.exists(self.separate[index])

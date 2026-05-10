@@ -190,7 +190,9 @@ class Window(QWidget):
         layout.addWidget(self.output)
         layout.addLayout(self.input_layout)
 
-        #- On bootup
+        self.bootup_message()
+
+    def bootup_message(self):
         date = str(time.localtime().tm_mday) + "/" + str(time.localtime().tm_mon) + "/" + str(time.localtime().tm_year)
         time_current = str(time.localtime().tm_hour) + ":" + str(time.localtime().tm_min) + "." + str(time.localtime().tm_sec)
         self.output.append("|-- <b>FILOSH v1.0</b> --|")
