@@ -33,35 +33,40 @@ class command_parser:
             "time": [[1], "flag"]
         }
         
-        self.split = self.split_string()
-        return self.split
+        self.verifiable = self.process_parse()
+        if self.verifiable:
+            print("correct command format")
+        else:
+            print("wrong command format")
 
 
-    def split_string(self):
+    def process_parse(self):
         self.separate = re.findall(r'\[.*?\]|".*?"|-\w+|[\w./\\]+', self.plain)
         self.cmd = self.separate[0]
         self.command_ref = self.commands.get(self.separate[0])
+        self.control = 0
 
         if self.command_ref == None: #- command not found
             return print(f"Unrecognized command '{self.separate[0]}'. Use help for a list of working commands.")
         if len(self.separate) == len(self.command_ref) and (len(self.separate)-1 in (self.command_ref[0])): #- process command type
-            if len(self.separate) <= 1: #- No argument command found
-                return self.separate[0]
+            if len(self.command_ref) <= 1: #- Command requires no arguments
+                return True
             else: #- command word & arguments are formatted correctly
                 for i in range(1, len(self.separate)):
                     if self.command_ref[i] == "flag":
-                        self.checktype_flag(i)
+                        self.control += 1 if self.checktype_flag(i) else self.control
                     elif self.command_ref[i] == "file":
-                        self.checktype_file(i)
+                        self.control += 1 if self.checktype_file(i) else self.control
                     elif self.command_ref[i] == "path":
-                        self.checktype_path(i)
+                        self.control += 1 if self.checktype_path(i) else self.control
                     elif self.command_ref[i] == "string":
-                        self.checktype_string(i)
+                        self.control += 1 if self.checktype_string(i) else self.control
                     elif self.command_ref[i] == "command":
-                        self.checktype_command(i)
+                        self.control += 1 if self.checktype_command(i) else self.control
                     else:
-                        self.checktype_value(i)
-        return self.plain
+                        self.control += 1 if self.checktype_value(i) else self.control
+            return True if self.control == len(self.command_ref)-1 else False
+        return False #- handles no argument commands
 
     def checktype_flag(self, index):
         if self.separate[index] in self.flags: #- flag exists
