@@ -272,6 +272,10 @@ class Window(QWidget):
     def input_processing(self):
         line = 1 #- implementing later on
         user_in = self.input_cmd.text()
+
+        if user_in.strip() == "":
+            return
+
         self.remove_cursor()
         self.cursor_timer.stop()
 
