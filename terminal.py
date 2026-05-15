@@ -1,5 +1,6 @@
 import time
 import parser
+import handler
 import os
 from PySide6.QtCore import Qt
 from PySide6 import QtGui, QtCore, QtWidgets
@@ -131,7 +132,6 @@ class Titlebar(QWidget):
 class Window(QWidget):
     def __init__(self):
         super().__init__()
-        self.parser = parser.command_parser()
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Window)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setMinimumSize(700,450)
@@ -182,15 +182,24 @@ class Window(QWidget):
         self.input_cmd.setFixedHeight(48)
         self.input_cmd.setContentsMargins(15, 0, 15, 15)
 
+        self.input_cmd.textChanged.connect(self.text_synchronization)
         self.input_cmd.returnPressed.connect(self.input_processing)
 
         self.input_layout = QtWidgets.QHBoxLayout()
         self.input_layout.addWidget(self.input_cmd)
 
+        self.cursor_char = "█"
+        self.cursor_visible = True
+        self.cursor_timer = QtCore.QTimer()
+
         layout.addWidget(self.output)
         layout.addLayout(self.input_layout)
 
+        self.parser = parser.command_parser()
+        self.handler = handler.command_handler(self.output)
+
         self.bootup_message()
+        self.text_synchronization()
 
     def bootup_message(self):
         date = str(time.localtime().tm_mday) + "/" + str(time.localtime().tm_mon) + "/" + str(time.localtime().tm_year)
@@ -199,6 +208,8 @@ class Window(QWidget):
         self.output.append(f"session started on {date} at {time_current}<br>")
         self.output.append("!! Type <b>help</b> for a list of commands !!")
         self.output.append("----------------------------------------------<br>")
+
+        self.output.append(f"{os.getcwd()}$: ")
 
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
@@ -211,12 +222,66 @@ class Window(QWidget):
         else:
             painter.drawRoundedRect(QtCore.QRectF(0, 0, self.width(), self.height()), 10, 10)
 
+    def remove_cursor(self):
+        self.cursor_timer.stop()
+        if self.cursor_visible:
+            cursor = self.output.textCursor()
+            cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+            cursor.deletePreviousChar()
+            cursor.deletePreviousChar()
+            self.cursor_visible = False
+
+    def text_synchronization(self):
+        self.cursor_timer.stop()
+    
+        cursor = self.output.textCursor()
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+        cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
+        cursor.removeSelectedText()
+
+        current = self.input_cmd.text()
+        if current.strip() == "":
+            self.output.insertPlainText(f"{os.getcwd()}$: {self.cursor_char}")
+        else:
+            self.output.insertPlainText(f"{os.getcwd()}$: {current} {self.cursor_char}")
+        self.cursor_visible = True
+
+        def blink():
+            inner_cursor = self.output.textCursor()
+            inner_cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
+            if self.cursor_visible:
+                inner_cursor.deletePreviousChar()
+                if self.input_cmd.text().strip() != "":
+                    inner_cursor.deletePreviousChar()
+                self.cursor_visible = False
+            else:
+                current = self.input_cmd.text()
+                if current.strip() == "":
+                    self.output.insertPlainText(f"{self.cursor_char}")
+                else:
+                    self.output.insertPlainText(f" {self.cursor_char}")
+                self.cursor_visible = True
+
+        try:
+            self.cursor_timer.timeout.disconnect()
+        except RuntimeError:
+            pass
+        self.cursor_timer.timeout.connect(blink)
+        self.cursor_timer.start(500)
+
     def input_processing(self):
         line = 1 #- implementing later on
         user_in = self.input_cmd.text()
+        self.remove_cursor()
+        self.cursor_timer.stop()
 
-        if len(user_in) > 0:
-            parsed = self.parser.parse(user_in)
-            self.output.append(f"{os.getcwd()}$: {parsed}")
+        if len(user_in) > 0 and user_in.strip() != "":
+            request = self.parser.parse(user_in)
+
+            if request != None:
+                self.handler.recieve_command(request, request["cmd"])
+            else: #- handle exact errors from parser later
+                print("error")
+            self.output.insertPlainText(f"\n{os.getcwd()}$: ")
             self.input_cmd.clear()
             line += 1

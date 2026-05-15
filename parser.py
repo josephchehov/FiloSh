@@ -32,41 +32,56 @@ class command_parser:
             "help": [[0]],
             "time": [[1], "flag"]
         }
-        
-        self.verifiable = self.process_parse()
-        if self.verifiable:
-            print("correct command format")
-        else:
-            print("wrong command format")
+        self.receivable = {}
 
+        return self.process()
 
-    def process_parse(self):
+    def process(self):
         self.separate = re.findall(r'\[.*?\]|".*?"|-\w+|[\w./\\]+', self.plain)
         self.cmd = self.separate[0]
         self.command_ref = self.commands.get(self.separate[0])
         self.control = 0
 
         if self.command_ref == None: #- command not found
-            return print(f"Unrecognized command '{self.separate[0]}'. Use help for a list of working commands.")
+            return
         if len(self.separate) == len(self.command_ref) and (len(self.separate)-1 in (self.command_ref[0])): #- process command type
             if len(self.command_ref) <= 1: #- Command requires no arguments
-                return True
-            else: #- command word & arguments are formatted correctly
+                return {
+                    "cmd": self.cmd
+                }
+            else: #- command requires atleast 1 argument
+                self.receivable["cmd"] = self.cmd
                 for i in range(1, len(self.separate)):
                     if self.command_ref[i] == "flag":
-                        self.control += 1 if self.checktype_flag(i) else self.control
+                        if self.checktype_flag(i):
+                            self.receivable["flag"] = self.separate[i]
+                            self.control += 1
                     elif self.command_ref[i] == "file":
-                        self.control += 1 if self.checktype_file(i) else self.control
+                        if self.checktype_file(i):
+                            self.receivable["file"] = self.separate[i]
+                            self.control += 1
                     elif self.command_ref[i] == "path":
-                        self.control += 1 if self.checktype_path(i) else self.control
+                        if self.checktype_path(i):
+                            self.receivable["path"] = self.separate[i]
+                            self.control += 1
                     elif self.command_ref[i] == "string":
-                        self.control += 1 if self.checktype_string(i) else self.control
+                        if self.checktype_string(i):
+                            self.separate[i] = self.separate[i].replace('"',"")
+                            self.receivable["string"] = self.separate[i]
+                            self.control += 1
                     elif self.command_ref[i] == "command":
-                        self.control += 1 if self.checktype_command(i) else self.control
+                        if self.checktype_command(i):
+                            self.receivable["command"] = self.separate[i]
+                            self.control += 1
                     else:
-                        self.control += 1 if self.checktype_value(i) else self.control
-            return True if self.control == len(self.command_ref)-1 else False
-        return False #- handles no argument commands
+                        if self.checktype_value(i):
+                            self.receivable["value"] = self.separate[i]
+                            self.control += 1
+            if self.control == len(self.command_ref)-1:
+                return self.receivable
+            else:
+                self.receivable = {}
+        return
 
     def checktype_flag(self, index):
         if self.separate[index] in self.flags: #- flag exists
