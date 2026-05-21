@@ -198,6 +198,16 @@ class Window(QWidget):
         self.parser = parser.command_parser()
         self.handler = handler.command_handler(self.output)
 
+        self.output.verticalScrollBar().rangeChanged.connect(
+            lambda: self.output.verticalScrollBar().setValue(
+                self.output.verticalScrollBar().maximum()
+            )
+        )
+
+        self.output.setTextInteractionFlags(
+            QtCore.Qt.TextInteractionFlag.NoTextInteraction
+        )
+
         self.bootup_message()
         self.text_synchronization()
 
@@ -230,6 +240,11 @@ class Window(QWidget):
             cursor.deletePreviousChar()
             cursor.deletePreviousChar()
             self.cursor_visible = False
+
+    def auto_scroll(self):
+        self.output.verticalScrollBar().setValue(
+            self.output.verticalScrollBar().maximum()
+        )
 
     def text_synchronization(self):
         self.cursor_timer.stop()
