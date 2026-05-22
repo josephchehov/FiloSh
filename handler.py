@@ -1,6 +1,5 @@
 import os
-import random
-import sys
+from pathlib import Path
 
 class command_handler:
     def __init__(self, output):
@@ -24,8 +23,8 @@ class command_handler:
             "&&": "  -over | overrides file content to user content",
             "move": "moves a file to a different location || requires a file and a path",
             "copy": "copies a file to a different location || requires a file and a path",
-            "delete": "deletes a file || optional flag,",
-            "^": "  -perm | permanantly deletes the attached file",
+            "delete": "deletes a file || optional flag",
+            "|": "  -perm | permanantly deletes the attached file",
             "data": "prints metadata || requires a file",
             "log": "logs all user input and terminal output (during session) and saves to a file || optional path",
             "history": "prints the run history of a specific command || requires a command (string)"
@@ -41,11 +40,11 @@ class command_handler:
         return
     
     def list(self):
-        self.output.insertPlainText("\n\n")
+        self.output.append("\n")
         for file in os.listdir(os.getcwd()):
             if os.path.isfile(file):
                 self.output.insertPlainText(f"{file}   ")
-        self.output.insertPlainText("\n")
+        self.output.append("")
         return
     
     def help(self):
@@ -59,5 +58,21 @@ class command_handler:
                 self.output.append(f"{value}")
         self.output.append("")
         self.output.append("<h3 style='margin: 0; padding: 0;'>EXAMPLES LOCATED IN THE README</h3>")
+        self.output.append("")
+        return
+    
+    def prdir(self):
+        self.output.append("")
+        if self.parsed_userin["flag"] == "-home":
+            self.output.append(f"<b>Home directory</b>: '{str(Path.home())}'")
+        else:
+            self.output.append(f"<b>Current working directory</b>: '{os.getcwd()}'")
+        self.output.append("")
+        return
+
+    def chdir(self):
+        self.output.append("")
+        os.chdir(self.parsed_userin["path"])
+        self.output.append(f"<b>Current working directory has changed to</b>: '{os.getcwd()}'")
         self.output.append("")
         return

@@ -1,5 +1,6 @@
 import re
 import os
+from pathlib import Path
 
 class command_parser:
     def parse(self, raw):
@@ -37,7 +38,7 @@ class command_parser:
         return self.process()
 
     def process(self):
-        self.separate = re.findall(r'\[.*?\]|".*?"|-\w+|[\w./\\]+', self.plain)
+        self.separate = re.findall(r'\[.*?\]|".*?"|-\w+|[a-zA-Z]:\\[\w\\./\s-]+|[\w./]+', self.plain)
         self.cmd = self.separate[0]
         self.command_ref = self.commands.get(self.separate[0])
         self.control = 0
@@ -90,8 +91,8 @@ class command_parser:
         return False
     
     def checktype_file(self, index):
-        self.local_files = os.listdir(os.getcwd())
-        if self.separate[index] in self.local_files: #- file found in current working directory
+        local_files = os.listdir(os.getcwd())
+        if self.separate[index] in local_files: #- file found in current working directory
             return True
         return False
     
@@ -109,4 +110,6 @@ class command_parser:
         return self.separate[index].isdigit()
     
     def checktype_path(self, index):
-        return os.path.exists(self.separate[index])
+        raw = self.separate[index]
+        normalized = os.path.normpath(raw.replace("\\\\", "\\"))
+        return os.path.exists(normalized)
