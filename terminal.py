@@ -137,6 +137,7 @@ class Window(QWidget):
         self.setMinimumSize(700,450)
         self.is_maximized = False
         self.normal_geometry = None
+        self.session_start = time.perf_counter()
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0,0,0,0)
@@ -196,7 +197,7 @@ class Window(QWidget):
         layout.addLayout(self.input_layout)
 
         self.parser = parser.command_parser()
-        self.handler = handler.command_handler(self.output)
+        self.handler = handler.command_handler(self.output, self.session_start)
 
         self.output.verticalScrollBar().rangeChanged.connect(
             lambda: self.output.verticalScrollBar().setValue(

@@ -1,9 +1,12 @@
 import os
+import time
+from datetime import datetime
 from pathlib import Path
 
 class command_handler:
-    def __init__(self, output):
+    def __init__(self, output, started):
         self.output = output
+        #- help
         self.assistance = {
             "clear": "clears terminal",
             "list": "lists all files in the current working directory",
@@ -29,14 +32,19 @@ class command_handler:
             "log": "logs all user input and terminal output (during session) and saves to a file || optional path",
             "history": "prints the run history of a specific command || requires a command (string)"
         }
+        #- time
+        self.process_time = []
+        self.began_session = started
 
     def recieve_command(self, raw, cmd): #- converts command name to callable function
+        self.start = time.perf_counter()
         self.parsed_userin = raw
         method = getattr(self, cmd, None)
         method()
 
     def clear(self):
         self.output.clear()
+        self.process_time.append(time.perf_counter() - self.start)
         return
     
     def list(self):
@@ -45,6 +53,7 @@ class command_handler:
             if os.path.isfile(file):
                 self.output.insertPlainText(f"{file}   ")
         self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
         return
     
     def help(self):
@@ -59,6 +68,7 @@ class command_handler:
         self.output.append("")
         self.output.append("<h3 style='margin: 0; padding: 0;'>EXAMPLES LOCATED IN THE README</h3>")
         self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
         return
     
     def prdir(self):
@@ -68,6 +78,7 @@ class command_handler:
         else:
             self.output.append(f"<b>Current working directory</b>: '{os.getcwd()}'")
         self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
         return
 
     def chdir(self):
@@ -75,4 +86,49 @@ class command_handler:
         os.chdir(self.parsed_userin["path"])
         self.output.append(f"<b>Current working directory has changed to</b>: '{os.getcwd()}'")
         self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
+        return
+    
+    def time(self):
+        self.output.append("")
+        average = 0
+        def format(elapsed):
+            if elapsed >= 3600:
+                h = int(elapsed // 3600)
+                m = int((elapsed % 3600) // 60)
+                s = int(elapsed % 60)
+                return f"{h}h {m}m {s}s"
+            elif elapsed >= 60:
+                m = int(elapsed // 60)
+                s = int(elapsed % 60)
+                return f"{m}m {s}s"
+            elif elapsed >= 1:
+                if self.parsed_userin["flag"] != "-acpt":
+                    return f"{int(elapsed)}s"
+                return f"{elapsed:.2f}s"
+            elif elapsed >= 0.001:
+                ms = elapsed * 1000
+                return f"{ms:.2f}ms"
+            elif elapsed >= 0.000001:
+                us = elapsed * 1000000
+                return f"{us:.2f}µ"
+            else:
+                ns = elapsed * 1000000000
+                return f"{ns:.2f}ns"
+        if self.parsed_userin["flag"] == "-acpt":
+            for cmdtime in self.process_time:
+                average += cmdtime
+            if len(self.process_time) == 0:
+                average = average
+            else:
+                average = average / len(self.process_time)
+            self.output.append(f"<b>Average command processing time is</b>: {format(average)}")
+            self.output.append(f"<b>Total commands run in session</b>: {len(self.process_time)}")
+        elif self.parsed_userin["flag"] == "-sesh":
+            self.output.append(f"<b>Session started</b>: {format(time.perf_counter() - self.began_session)} ago")
+        else:
+            current = datetime.now()
+            self.output.append(f"<b>Current time</b>: {current.strftime('%H:%M:%S')} | {current.strftime('%I:%M:%S %p')}")
+        self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
         return
