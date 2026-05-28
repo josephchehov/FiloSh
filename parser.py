@@ -45,7 +45,7 @@ class command_parser:
 
         if self.command_ref == None: #- command not found
             return
-        if len(self.separate) == len(self.command_ref) and (len(self.separate)-1 in (self.command_ref[0])): #- process command type
+        if (len(self.separate)+1 in self.command_ref[0]) or (len(self.separate)-1 in (self.command_ref[0])): #- process command type
             if len(self.command_ref) <= 1: #- Command requires no arguments
                 return {
                     "cmd": self.cmd
@@ -78,7 +78,7 @@ class command_parser:
                         if self.checktype_value(i):
                             self.receivable["value"] = self.separate[i]
                             self.control += 1
-            if self.control == len(self.command_ref)-1:
+            if (self.control in self.command_ref[0]) and (self.control == len(self.separate)-1):
                 return self.receivable
             else:
                 self.receivable = {}

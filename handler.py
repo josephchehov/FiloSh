@@ -132,3 +132,17 @@ class command_handler:
         self.output.append("")
         self.process_time.append(time.perf_counter() - self.start)
         return
+    
+    def read(self):
+        self.output.append("")
+        with open(self.parsed_userin["file"], 'r') as f:
+            lines = f.readlines()
+        if len(self.parsed_userin) > 2:
+            if self.parsed_userin["flag"] == "-head":
+                lines = lines[:int(self.parsed_userin["value"])]
+            else:
+                lines = lines[-int(self.parsed_userin["value"]):]
+        for line in lines:
+            self.output.append(line.strip())
+        self.output.append("")
+        return
