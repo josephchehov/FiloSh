@@ -22,11 +22,30 @@ Reference guide for up to date command info and examples
 
 <br>
 
-**help** - outputs information on all commands, including their arguments (if they have any)
+'**help**' - outputs information on all commands, including their arguments (if they have any)
 
-**clear** - clears the terminal
+'**clear**' - clears the terminal
 
-**prdir** - outputs the specified directory | requires 1 of 2 arguments of type ***flag***
+'**time**' - outputs elapsed time | requires 1 of 3 arguments of type ***flag***
+- *-sesh* session (since terminal booted up)
+- *-base* local time
+- *-acpt* average command processing time
+```
+c:\Users\Name\Desktop\Filosh$: time -sesh
+
+Session started: 1m 2s ago
+```
+<br>
+
+'**log**' - saves successfully run command logs (in this session) to a new file in the current directory unless otherwise specified | allows 1 optional argument of type ***path***
+```
+c:\Users\Name\Desktop\Filosh$: log c:\Users\Name\Desktop\Logs
+
+Log file saved at: 'c:\Users\Name\Desktop\Logs'
+```
+<br>
+
+'**prdir**' - outputs the specified directory | requires 1 of 2 arguments of type ***flag***
 - *-home* home
 - *-work* working
 ```
@@ -36,7 +55,7 @@ Home Directory: 'c:\Users\Name'
 ```
 <br>
 
-**chdir** - changes the current working directory to the specified path | requires 1 argument of type ***path***
+'**chdir**' - changes the current working directory to the specified path | requires 1 argument of type ***path***
 ```
 c:\Users\Name\Desktop\Filosh$: chdir c:\Users\Name\Desktop
 
@@ -44,7 +63,7 @@ Current working directory has changed to: 'c:\Users\Name\Desktop
 ```
 <br>
 
-**list** - lists all files in the <u>current</u> working directory
+'**list**' - lists all files in the <u>current</u> working directory
 ```
 c:\Users\Name\Desktop\Filosh$: list
 
@@ -52,7 +71,7 @@ example.txt  desktop.ini  file.lnk  file2.lnk
 ```
 <br>
 
-**read** - outputs all contents in a file unless specified | requires 1 argument of type ***file*** & allows 1 of 2 option arguments of type ***flag*** paired with a ***value***
+'**read**' - outputs all contents in a file unless specified | requires 1 argument of type ***file*** & allows 1 of 2 option arguments of type ***flag*** paired with a ***value***
 - '-head #' ~ the first # lines of a file
 - '-tail #' ~ the last # lines of a file
 ```
@@ -71,7 +90,7 @@ this is line 3!
 
 <br>
 
-**write** - applies string input to a file & outputs file & size change | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
+'**write**' - applies string input to a file & outputs file & size change | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
 - '-appd' ~ appends string input to a newline at the end of the file
 - '-over' ~ overrides the file contents to string input only
 ```
