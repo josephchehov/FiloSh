@@ -9,8 +9,7 @@ Python3-based file management shell
 **prdir** - outputs the specified directory | requires 1 of 2 arguments
 - *-home* home
 - *-work* working
-```
-c:\Users\Name\Desktop\Filosh$: prdir -home
-
-Home Directory: 'c:\Users\Name'
-```
+> c:\Users\Name\Desktop\Filosh$: prdir -home
+>
+> Home Directory: 'c:\Users\Name'
+>
