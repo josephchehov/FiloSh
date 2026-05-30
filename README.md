@@ -99,7 +99,7 @@ c:\Users\Name\Desktop\Filosh$: write example.txt "file overriden"
 File contents overriden to:
 
 'file overriden'
-- 56.0 bytes
+-56.0 bytes
 ```
 > ##### example.txt
 > file overriden
