@@ -71,7 +71,7 @@ example.txt  desktop.ini  file.lnk  file2.lnk
 ```
 <br>
 
-'**read**' - outputs all contents in a file unless specified | requires 1 argument of type ***file*** & allows 1 of 2 option arguments of type ***flag*** paired with a ***value***
+'**read**' - outputs all contents in a file unless specified | requires 1 argument of type ***file*** & allows 1 of 2 optional arguments of type ***flag*** paired with a ***value***
 - '-head #' ~ the first # lines of a file
 - '-tail #' ~ the last # lines of a file
 ```
