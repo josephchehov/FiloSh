@@ -22,7 +22,7 @@ Reference guide for up to date command info and examples
 
 <br>
 
-'**help**' - outputs information on all commands, including their arguments (if they have any)
+'**help**' - outputs information on all commands and their compatible flags (if they have any)
 
 '**clear**' - clears the terminal
 
