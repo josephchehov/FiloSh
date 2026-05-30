@@ -7,11 +7,17 @@ Reference guide for up to date command info and examples
 *ver 1.0*
 
 > #### Argument classifiers
+>
 > *flag* ~ a parameter used to specify settings for a command. It uses a dash ('-') followed by an 4-letter abbreviation for its action, (ex. -abbv)
+>
 > *file* ~ a simplified form of a path classifier just for files (local) based on its name and extention, (ex. example.txt)
+>
 > *path* ~ the exact location of a file or directory within the computers file system, (ex. c:\Users\Name\Desktop\Directory1)
+>
 > *command* ~ the full name of a command, (ex. help)
+>
 > *string* ~ string input that encapsulated between double quotations, (ex. "this is string input")
+>
 > *value* a positive integer, (ex. 1) 
 
 **help** - outputs information on all commands, including their arguments (if they have any)
@@ -51,10 +57,14 @@ this is line 1!
 this is line 2!
 this is line 3!
 ```
-> ##### example.txt
+> ##### 'example.txt' contents
+>
 > this is line 1!
+>
 > this is line 2!
+>
 > this is line 3!
+>
 > this is line 4!
 
 **write** - applies string input to a file & outputs file & size change | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
@@ -68,7 +78,7 @@ File contents overriden to:
 'file overriden'
 - 56.0 bytes
 ```
-> ##### example.txt
+> ##### 'example.txt' contents
 > file overriden
 
 ------ OTHER COMMANDS IN PROGRESS ------
