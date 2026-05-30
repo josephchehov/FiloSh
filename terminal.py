@@ -215,6 +215,7 @@ class Window(QWidget):
     def bootup_message(self):
         date = str(time.localtime().tm_mday) + "/" + str(time.localtime().tm_mon) + "/" + str(time.localtime().tm_year)
         time_current = str(time.localtime().tm_hour) + ":" + str(time.localtime().tm_min) + "." + str(time.localtime().tm_sec)
+        
         self.output.append("|-- <b>FILOSH v1.0</b> --|")
         self.output.append(f"session started on {date} at {time_current}<br>")
         self.output.append("!! Type <b>help</b> for a list of commands !!")
@@ -252,7 +253,7 @@ class Window(QWidget):
     
         cursor = self.output.textCursor()
         cursor.movePosition(QtGui.QTextCursor.MoveOperation.End)
-        cursor.select(QtGui.QTextCursor.SelectionType.LineUnderCursor)
+        cursor.movePosition(QtGui.QTextCursor.MoveOperation.StartOfBlock, QtGui.QTextCursor.MoveMode.KeepAnchor)
         cursor.removeSelectedText()
 
         current = self.input_cmd.text()
@@ -302,6 +303,7 @@ class Window(QWidget):
                 self.handler.recieve_command(request, request["cmd"])
             else: #- handle exact errors from parser later
                 print("error")
+
             self.output.insertPlainText(f"\n{os.getcwd()}$: ")
             self.input_cmd.clear()
             line += 1

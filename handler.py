@@ -6,7 +6,7 @@ from pathlib import Path
 class command_handler:
     def __init__(self, output, started):
         self.output = output
-        #- help
+        
         self.assistance = {
             "clear": "clears terminal",
             "list": "lists all files in the current working directory",
@@ -32,7 +32,7 @@ class command_handler:
             "log": "logs all user input and terminal output (during session) and saves to a file || optional path",
             "history": "prints the run history of a specific command || requires a command (string)"
         }
-        #- time
+        
         self.process_time = []
         self.began_session = started
 
@@ -144,5 +144,47 @@ class command_handler:
                 lines = lines[-int(self.parsed_userin["value"]):]
         for line in lines:
             self.output.append(line.strip())
+        self.output.append("")
+        return
+    
+    def write(self):
+        self.output.append("")
+        def calculate_file_size():
+            fp = open(self.parsed_userin["file"], 'r') # calculating file size
+            old_position = fp.tell()
+            fp.seek(0, 2)
+            size = fp.tell()
+            fp.seek(old_position, 0)
+            return size
+        def format_size(size):
+            for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+                if size <= 1024.0:
+                    return "%3.1f %s" % (size, x)
+                size /= 1024.0
+        
+        old = calculate_file_size()
+
+        if self.parsed_userin["flag"] == "-over":
+            with open(self.parsed_userin["file"], 'w') as f:
+                f.truncate(0)
+                f.write(self.parsed_userin["string"])
+                self.output.append(f"<b>File contents overridden to</b>:")
+                self.output.append(f"\n'{self.parsed_userin["string"]}'\n")
+        else:
+            with open(self.parsed_userin["file"], 'a+') as f:
+                f.seek(0, 2)
+                if f.tell() > 0: #- check newline
+                    f.seek(f.tell()-1)
+                    lchar = f.read(1)
+                    if lchar != "\n":
+                        f.write("\n")
+                self.output.append(f"<b>Appended contents</b>:")
+                self.output.append(f"\n'{self.parsed_userin["string"]}'\n")
+                f.write(self.parsed_userin["string"] + '\n')
+
+        difference = format_size(calculate_file_size() - old)
+        if calculate_file_size() - old >= 0:
+            difference = f'+{difference}'
+        self.output.append(f"<b>{difference}</b>")
         self.output.append("")
         return
