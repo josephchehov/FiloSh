@@ -27,9 +27,9 @@ Reference guide for up to date command info and examples
 '**clear**' - clears the terminal
 
 '**time**' - outputs elapsed time | requires 1 of 3 arguments of type ***flag***
-- *-sesh* session (since terminal booted up)
-- *-base* local time
-- *-acpt* average command processing time
+- *-sesh* ~ session (since terminal booted up)
+- *-base* ~ local time
+- *-acpt* ~ average command processing time
 ```
 c:\Users\Name\Desktop\Filosh$: time -sesh
 
@@ -46,8 +46,8 @@ Log file saved at: 'c:\Users\Name\Desktop\Logs'
 <br>
 
 '**prdir**' - outputs the specified directory | requires 1 of 2 arguments of type ***flag***
-- *-home* home
-- *-work* working
+- *-home* ~ home
+- *-work* ~ working
 ```
 c:\Users\Name\Desktop\Filosh$: prdir -home
 
@@ -72,8 +72,8 @@ example.txt  desktop.ini  file.lnk  file2.lnk
 <br>
 
 '**read**' - outputs all contents in a file unless specified | requires 1 argument of type ***file*** & allows 1 of 2 optional arguments of type ***flag*** paired with a ***value***
-- '-head #' ~ the first # lines of a file
-- '-tail #' ~ the last # lines of a file
+- *-head #* ~ the first # lines of a file
+- *-tail #* ~ the last # lines of a file
 ```
 c:\Users\Name\Desktop\Filosh$: read example.txt -head 3
 
@@ -91,8 +91,8 @@ this is line 3!
 <br>
 
 '**write**' - applies string input to a file & outputs file & size change | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
-- '-appd' ~ appends string input to a newline at the end of the file
-- '-over' ~ overrides the file contents to string input only
+- *-appd* ~ appends string input to a newline at the end of the file
+- *-over* ~ overrides the file contents to string input only
 ```
 c:\Users\Name\Desktop\Filosh$: write example.txt "file overriden"
 
