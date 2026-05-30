@@ -3,7 +3,7 @@ Python3-based file management shell
 
 
 ## Commands
-Reference guide for up to date command info and examples
+Reference guide for up to date command descriptions and argument format, along with examples. <br>
 *ver 1.0*
 
 ##### Argument classifiers
