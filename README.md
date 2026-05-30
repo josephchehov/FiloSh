@@ -61,15 +61,12 @@ this is line 1!
 this is line 2!
 this is line 3!
 ```
-> ##### 'example.txt' contents
+> ##### example.txt
 >
-> this is line 1!
->
-> this is line 2!
->
-> this is line 3!
->
-> this is line 4!
+> this is line 1! <br>
+> this is line 2! <br>
+> this is line 3! <br>
+> this is line 4! <br>
 
 
 **write** - applies string input to a file & outputs file & size change | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
@@ -83,7 +80,7 @@ File contents overriden to:
 'file overriden'
 - 56.0 bytes
 ```
-> ##### 'example.txt' contents
+> ##### example.txt
 > file overriden
 
 
