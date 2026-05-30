@@ -8,18 +8,19 @@ Reference guide for up to date command info and examples
 
 ##### Argument classifiers
 >
-> **flag** ~ a parameter used to specify settings for a command. It uses a dash ('-') followed by an 4-letter abbreviation for its action, (ex. -abbv)
+> **flag** -- parameter used to specify settings for a command. It uses a dash ('-') followed by an 4-letter abbreviation for its action, (ex. -abbv)
 >
-> **file** ~ a simplified form of a path classifier just for files (local) based on its name and extention, (ex. example.txt)
+> **file** -- a simplified form of a path classifier just for files (local) based on its name and extention, (ex. example.txt)
 >
-> **path** ~ the exact location of a file or directory within the computers file system, (ex. c:\Users\Name\Desktop\Directory1)
+> **path** -- the exact location of a file or directory within the computers file system, (ex. c:\Users\Name\Desktop\Directory1)
 >
-> **command** ~ the full name of a command, (ex. help)
+> **command** -- the full name of a command, (ex. help)
 >
-> **string** ~ string input that encapsulated between double quotations, (ex. "this is string input")
+> **string** -- string input that encapsulated between double quotations, (ex. "this is string input")
 >
-> **value** ~ a positive integer, (ex. 1)
->
+> **value** -- a positive integer, (ex. 1)
+
+<br>
 
 **help** - outputs information on all commands, including their arguments (if they have any)
 
@@ -33,7 +34,7 @@ c:\Users\Name\Desktop\Filosh$: prdir -home
 
 Home Directory: 'c:\Users\Name'
 ```
-
+<br>
 
 **chdir** - changes the current working directory to the specified path | requires 1 argument of type ***path***
 ```
@@ -41,7 +42,7 @@ c:\Users\Name\Desktop\Filosh$: chdir c:\Users\Name\Desktop
 
 Current working directory has changed to: 'c:\Users\Name\Desktop
 ```
-
+<br>
 
 **list** - lists all files in the <u>current</u> working directory
 ```
@@ -49,7 +50,7 @@ c:\Users\Name\Desktop\Filosh$: list
 
 example.txt  desktop.ini  file.lnk  file2.lnk
 ```
-
+<br>
 
 **read** - outputs all contents in a file unless specified | requires 1 argument of type ***file*** & allows 1 of 2 option arguments of type ***flag*** paired with a ***value***
 - '-head #' ~ the first # lines of a file
@@ -68,6 +69,7 @@ this is line 3!
 > this is line 3! <br>
 > this is line 4! <br>
 
+<br>
 
 **write** - applies string input to a file & outputs file & size change | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
 - '-appd' ~ appends string input to a newline at the end of the file
@@ -83,5 +85,6 @@ File contents overriden to:
 > ##### example.txt
 > file overriden
 
+<br>
 
 ------ OTHER COMMANDS IN PROGRESS ------
