@@ -6,7 +6,6 @@ Python3-based file management shell
 Reference guide for up to date command info and examples
 *ver 1.0*
 
-> #### Argument classifiers
 >
 > *flag* ~ a parameter used to specify settings for a command. It uses a dash ('-') followed by an 4-letter abbreviation for its action, (ex. -abbv)
 >
