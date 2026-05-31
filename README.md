@@ -95,7 +95,7 @@ this is line 3!
 - *-appd* ~ appends string input to a newline at the end of the file
 - *-over* ~ overrides the file contents to string input only
 ```
-c:\Users\Name\Desktop\Filosh$: write example.txt "file overriden"
+c:\Users\Name\Desktop\Filosh$: write example.txt "file overriden" -over
 
 File contents overriden to:
 
