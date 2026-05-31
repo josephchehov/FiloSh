@@ -1,7 +1,7 @@
 # FiloSh
 Python3-based file management shell
 
-![Alt text](images/terminal.png)
+![Alt text](images/snippet.png)
 
 ## Commands
 Reference guide for up to date command descriptions and argument format, along with examples. <br>
