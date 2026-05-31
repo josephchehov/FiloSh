@@ -1,7 +1,7 @@
 # FiloSh
 Python3-based file management shell
 
-<img src="images/terminal.png" alt="Terminal on bootup" style="border: 2px solid black; border-radius: 15px;">
+![Alt text](images/terminal.png)
 
 ## Commands
 Reference guide for up to date command descriptions and argument format, along with examples. <br>
