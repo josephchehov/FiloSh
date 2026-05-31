@@ -103,8 +103,8 @@ class command_parser:
                 return True
         return False
     
-    def checktype_command(self, index): #- implementing command entry validation later
-        return
+    def checktype_command(self, index):
+        return self.separate[index] in self.commands
 
     def checktype_value(self, index):
         return self.separate[index].isdigit()

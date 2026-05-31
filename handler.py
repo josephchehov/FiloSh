@@ -3,6 +3,7 @@ import time
 import shutil
 from datetime import datetime, date
 from pathlib import Path
+from send2trash import send2trash
 
 class command_handler:
     def __init__(self, output, started, bootup):
@@ -46,6 +47,12 @@ class command_handler:
         method()
 
         self.logs.append([raw_userin, datetime.now().strftime('%H:%M:%S')])
+
+    def format_size(self, size):
+            for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
+                if size <= 1024.0:
+                    return "%3.1f %s" % (size, x)
+                size /= 1024.0
 
     def clear(self):
         self.output.clear()
@@ -154,6 +161,7 @@ class command_handler:
             self.output.append(line.strip())
 
         self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
         return
     
     def write(self):
@@ -165,11 +173,6 @@ class command_handler:
             size = fp.tell()
             fp.seek(old_position, 0)
             return size
-        def format_size(size):
-            for x in ['bytes', 'KB', 'MB', 'GB', 'TB']:
-                if size <= 1024.0:
-                    return "%3.1f %s" % (size, x)
-                size /= 1024.0
         
         old = calculate_file_size()
 
@@ -191,13 +194,50 @@ class command_handler:
                 self.output.append(f"\n'{self.parsed_userin["string"]}'\n")
                 f.write(self.parsed_userin["string"] + '\n')
 
-        difference = format_size(calculate_file_size() - old)
+        difference = self.format_size(calculate_file_size() - old)
         if calculate_file_size() - old >= 0:
             difference = f'+{difference}'
         self.output.append(f"<b>{difference}</b>")
         self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
         return
     
+    def copy(self):
+        self.output.append("")
+        try:
+            shutil.copy(os.path.abspath(self.parsed_userin["file"]), self.parsed_userin["path"])
+            self.output.append(f"File has been successfully copied to: {self.parsed_userin["path"]}\n")
+            self.output.append(f"<b>Metadata and permissions preserved</b>")
+            self.output.append("")
+        except:
+            self.output.append(f"A file with that name already exists within: {self.parsed_userin["path"]}")
+        
+        self.process_time.append(time.perf_counter() - self.start)
+        return
+    
+    def move(self):
+        self.output.append("")
+        try:
+            shutil.move(os.path.abspath(self.parsed_userin["file"]), self.parsed_userin["path"])
+            self.output.append(f"File has been successfully copied to: {self.parsed_userin["path"]}\n")
+        except:
+            self.output.append(f"A file with that name already exists within: {self.parsed_userin["path"]}")
+        
+        self.process_time.append(time.perf_counter() - self.start)
+        return
+    
+    def delete(self):
+        self.output.append("")
+        if len(self.parsed_userin) > 2:
+            os.remove(self.parsed_userin["file"])
+            self.output.append(f"'{self.parsed_userin["file"]}' has been permanantly deleted\n")
+        else:
+            send2trash(self.parsed_userin["file"])
+            self.output.append(f"'{self.parsed_userin["file"]}' has been moved to the recycling bin\n")
+        
+        self.process_time.append(time.perf_counter() - self.start)
+        return
+
     def log(self):
         now = datetime.now()
         fpath = f"filosh_{now.strftime('%Y-%m-%d_%H-%M-%S')}.log"
@@ -217,4 +257,48 @@ class command_handler:
             self.output.append(f"<b>Located</b>: '{os.getcwd()}'")
 
         self.output.append("")
+        return
+    
+    def data(self):
+        stats = os.stat(self.parsed_userin["file"])
+        self.output.append("")
+
+        metadata = {
+            "size": self.format_size(stats.st_size),
+            "created": datetime.fromtimestamp(stats.st_birthtime).strftime('%Y-%m-%d | %H:%M:%S'),
+            "modified": datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d | %H:%M:%S'),
+            "accessed": datetime.fromtimestamp(stats.st_atime).strftime('%Y-%m-%d | %H:%M:%S'),
+            "path": os.path.abspath(self.parsed_userin["file"]),
+            "extention": os.path.splitext(self.parsed_userin["file"])[1] or "none",
+            "type": "file" if os.path.isfile(self.parsed_userin["file"]) else "directory",
+            "permissions": f"read: {os.access(self.parsed_userin["file"], os.R_OK)} | write: {os.access(self.parsed_userin["file"], os.W_OK)} | execute: {os.access(self.parsed_userin["file"], os.X_OK)}"
+        }
+
+        for key, item in metadata.items():
+            self.output.append(f"<b>{key}</b>: {item}")
+
+        self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
+        return
+    
+    def history(self):
+        self.output.append("")
+        inc = 1
+
+        for log in self.logs:
+            try:
+                if log[0].index(self.parsed_userin["command"]) == 0:
+                    self.output.append(f"<b>[{inc}]</b> '{log[0]}' | {log[1]}")
+                    inc += 1
+            except:
+                continue
+
+        if inc-1 == 0:
+            self.output.append(f"No history of successfully running '{self.parsed_userin["command"]}' this session")
+        else:
+            self.output.append("")
+            self.output.append(f"'{self.parsed_userin["command"]}' has been run a total of <b>{inc-1}</b> times this session")
+        
+        self.output.append("")
+        self.process_time.append(time.perf_counter() - self.start)
         return
