@@ -219,7 +219,7 @@ class command_handler:
         self.output.append("")
         try:
             shutil.move(os.path.abspath(self.parsed_userin["file"]), self.parsed_userin["path"])
-            self.output.append(f"File has been successfully copied to: {self.parsed_userin["path"]}\n")
+            self.output.append(f"File has been successfully moved to: {self.parsed_userin["path"]}\n")
         except:
             self.output.append(f"A file with that name already exists within: {self.parsed_userin["path"]}")
         
@@ -233,7 +233,7 @@ class command_handler:
             self.output.append(f"'{self.parsed_userin["file"]}' has been permanantly deleted\n")
         else:
             send2trash(self.parsed_userin["file"])
-            self.output.append(f"'{self.parsed_userin["file"]}' has been moved to the recycling bin\n")
+            self.output.append(f"'{self.parsed_userin["file"]}' has been sent to the recycling bin\n")
         
         self.process_time.append(time.perf_counter() - self.start)
         return
@@ -269,7 +269,7 @@ class command_handler:
             "modified": datetime.fromtimestamp(stats.st_mtime).strftime('%Y-%m-%d | %H:%M:%S'),
             "accessed": datetime.fromtimestamp(stats.st_atime).strftime('%Y-%m-%d | %H:%M:%S'),
             "path": os.path.abspath(self.parsed_userin["file"]),
-            "extention": os.path.splitext(self.parsed_userin["file"])[1] or "none",
+            "extension": os.path.splitext(self.parsed_userin["file"])[1] or "none",
             "type": "file" if os.path.isfile(self.parsed_userin["file"]) else "directory",
             "permissions": f"read: {os.access(self.parsed_userin["file"], os.R_OK)} | write: {os.access(self.parsed_userin["file"], os.W_OK)} | execute: {os.access(self.parsed_userin["file"], os.X_OK)}"
         }
