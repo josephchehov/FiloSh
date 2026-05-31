@@ -1,12 +1,14 @@
 import os
 import time
-from datetime import datetime
+import shutil
+from datetime import datetime, date
 from pathlib import Path
 
 class command_handler:
-    def __init__(self, output, started):
+    def __init__(self, output, started, bootup):
         self.output = output
-        
+        self.bootup = bootup
+        self.logs = []
         self.assistance = {
             "clear": "clears terminal",
             "list": "lists all files in the current working directory",
@@ -29,18 +31,21 @@ class command_handler:
             "delete": "deletes a file || optional flag",
             "|": "  -perm | permanantly deletes the attached file",
             "data": "prints metadata || requires a file",
-            "log": "logs all user input and terminal output (during session) and saves to a file || optional path",
+            "log": "logs all user input during session and saves as a file located in the current working directory unless otherwise specified || optional path",
             "history": "prints the run history of a specific command || requires a command (string)"
         }
-        
         self.process_time = []
         self.began_session = started
 
-    def recieve_command(self, raw, cmd): #- converts command name to callable function
+    def recieve_command(self, raw, cmd, userin): #- converts command name to callable function
+        raw_userin = userin
         self.start = time.perf_counter()
         self.parsed_userin = raw
+
         method = getattr(self, cmd, None)
         method()
+
+        self.logs.append([raw_userin, datetime.now().strftime('%H:%M:%S')])
 
     def clear(self):
         self.output.clear()
@@ -135,15 +140,19 @@ class command_handler:
     
     def read(self):
         self.output.append("")
+
         with open(self.parsed_userin["file"], 'r') as f:
             lines = f.readlines()
+
         if len(self.parsed_userin) > 2:
             if self.parsed_userin["flag"] == "-head":
                 lines = lines[:int(self.parsed_userin["value"])]
             else:
                 lines = lines[-int(self.parsed_userin["value"]):]
+
         for line in lines:
             self.output.append(line.strip())
+
         self.output.append("")
         return
     
@@ -186,5 +195,26 @@ class command_handler:
         if calculate_file_size() - old >= 0:
             difference = f'+{difference}'
         self.output.append(f"<b>{difference}</b>")
+        self.output.append("")
+        return
+    
+    def log(self):
+        now = datetime.now()
+        fpath = f"filosh_{now.strftime('%Y-%m-%d_%H-%M-%S')}.log"
+        self.output.append("")
+
+        with open(fpath, 'a') as f:
+            for process in self.logs:
+                f.write(f"'{process[0]}'|{process[1]}\n")
+
+        self.output.append(f"<b>Log file created</b>: '{fpath}'")
+        self.output.append("")
+
+        if len(self.parsed_userin) > 1:
+            shutil.move(fpath, self.parsed_userin["path"])
+            self.output.append(f"<b>Located</b>: '{self.parsed_userin["path"]}'")
+        else:
+            self.output.append(f"<b>Located</b>: '{os.getcwd()}'")
+
         self.output.append("")
         return

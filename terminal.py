@@ -196,14 +196,13 @@ class Window(QWidget):
         layout.addWidget(self.output)
         layout.addLayout(self.input_layout)
 
-        self.parser = parser.command_parser()
-        self.handler = handler.command_handler(self.output, self.session_start)
+        self.today = str(time.localtime().tm_mday) + "/" + str(time.localtime().tm_mon) + "/" + str(time.localtime().tm_year)
+        self.time_current = str(time.localtime().tm_hour) + ":" + str(time.localtime().tm_min) + "." + str(time.localtime().tm_sec)
 
-        self.output.verticalScrollBar().rangeChanged.connect(
-            lambda: self.output.verticalScrollBar().setValue(
-                self.output.verticalScrollBar().maximum()
-            )
-        )
+        self.parser = parser.command_parser()
+        self.handler = handler.command_handler(self.output, self.session_start, [self.today, self.time_current])
+
+        self.output.verticalScrollBar().rangeChanged.connect(self.auto_scroll)
 
         self.output.setTextInteractionFlags(
             QtCore.Qt.TextInteractionFlag.NoTextInteraction
@@ -213,11 +212,8 @@ class Window(QWidget):
         self.text_synchronization()
 
     def bootup_message(self):
-        date = str(time.localtime().tm_mday) + "/" + str(time.localtime().tm_mon) + "/" + str(time.localtime().tm_year)
-        time_current = str(time.localtime().tm_hour) + ":" + str(time.localtime().tm_min) + "." + str(time.localtime().tm_sec)
-        
         self.output.append("|-- <b>FILOSH v1.0</b> --|")
-        self.output.append(f"session started on {date} at {time_current}<br>")
+        self.output.append(f"session started on {self.today} at {self.time_current}<br>")
         self.output.append("!! Type <b>help</b> for a list of commands !!")
         self.output.append("----------------------------------------------<br>")
 
@@ -244,9 +240,10 @@ class Window(QWidget):
             self.cursor_visible = False
 
     def auto_scroll(self):
-        self.output.verticalScrollBar().setValue(
-            self.output.verticalScrollBar().maximum()
-        )
+        scrollbar = self.output.verticalScrollBar()
+
+        if scrollbar.value() >= (scrollbar.maximum() - 50):
+            scrollbar.setValue(scrollbar.maximum())
 
     def text_synchronization(self):
         self.cursor_timer.stop()
@@ -288,7 +285,7 @@ class Window(QWidget):
 
     def input_processing(self):
         line = 1 #- implementing later on
-        user_in = self.input_cmd.text()
+        user_in = self.input_cmd.text().strip()
 
         if user_in.strip() == "":
             return
@@ -299,11 +296,11 @@ class Window(QWidget):
         if len(user_in) > 0 and user_in.strip() != "":
             request = self.parser.parse(user_in)
 
-            if request != None:
-                self.handler.recieve_command(request, request["cmd"])
-            else: #- handle exact errors from parser later
-                print("error")
-
-            self.output.insertPlainText(f"\n{os.getcwd()}$: ")
-            self.input_cmd.clear()
-            line += 1
+            try:
+                self.handler.recieve_command(request, request["cmd"], user_in)
+            except Exception as e:
+                print(e)
+            finally:
+                self.output.insertPlainText(f"\n{os.getcwd()}$: ")
+                self.input_cmd.clear()
+                line += 1

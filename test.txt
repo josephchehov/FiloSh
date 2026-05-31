@@ -1,1 +1,3 @@
 cleared
+something
+clear
