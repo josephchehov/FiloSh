@@ -60,7 +60,7 @@ Home Directory: 'c:\Users\Name'
 ```
 c:\Users\Name\Desktop\Filosh$: chdir c:\Users\Name\Desktop
 
-Current working directory has changed to: 'c:\Users\Name\Desktop
+Current working directory has changed to: 'c:\Users\Name\Desktop'
 ```
 <br>
 
