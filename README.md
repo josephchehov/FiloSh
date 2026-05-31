@@ -1,7 +1,7 @@
 # FiloSh
 Python3-based file management shell
 
-![Alt text](images/terminal.png)
+![Alt text](images/snippet.png)
 
 ## Commands
 Reference guide for up to date command descriptions and argument format, along with examples. <br>
@@ -60,7 +60,7 @@ Home Directory: 'c:\Users\Name'
 ```
 c:\Users\Name\Desktop\Filosh$: chdir c:\Users\Name\Desktop
 
-Current working directory has changed to: 'c:\Users\Name\Desktop
+Current working directory has changed to: 'c:\Users\Name\Desktop'
 ```
 <br>
 
@@ -95,7 +95,7 @@ this is line 3!
 - *-appd* ~ appends string input to a newline at the end of the file
 - *-over* ~ overrides the file contents to string input only
 ```
-c:\Users\Name\Desktop\Filosh$: write example.txt "file overriden"
+c:\Users\Name\Desktop\Filosh$: write example.txt "file overriden" -over
 
 File contents overriden to:
 
