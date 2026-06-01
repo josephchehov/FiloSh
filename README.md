@@ -39,7 +39,7 @@ Session started: 1m 2s ago
 ```
 <br>
 
-'**log**' - saves successfully run command logs (in this session) to a new file in the current directory unless otherwise specified | allows 1 optional argument of type ***path***
+'**log**' - saves successfully run command logs (in this session) to a new file in the current working directory unless otherwise specified | allows 1 optional argument of type ***path***
 ```
 c:\Users\Name\Desktop\Filosh$: log c:\Users\Name\Desktop\Logs
 
@@ -47,7 +47,7 @@ Log file saved at: 'c:\Users\Name\Desktop\Logs'
 ```
 <br>
 
-'**history**' - outputs log data for a specific command (if any) in the session | requires 1 argument of type ***command***
+'**history**' - outputs log data for a specific command in the session (if any) | requires 1 argument of type ***command***
 ```
 c:\Users\Name\Desktop\Filosh$: history time
 
@@ -77,13 +77,13 @@ Current working directory has changed to: 'c:\Users\Name\Desktop'
 
 '**list**' - lists all files in the <u>current</u> working directory
 ```
-c:\Users\Name\Desktop\Filosh$: list
+c:\Users\Name\Desktop$: list
 
-example.txt  desktop.ini  file.lnk  file2.lnk
+receipts.txt  desktop.ini  file.lnk  file2.lnk
 ```
 <br>
 
-'**read**' - outputs all contents in a file unless specified | requires 1 argument of type ***file*** & allows 1 of 2 optional arguments of type ***flag*** paired with a ***value***
+'**read**' - outputs all contents in a file unless a span specified | requires 1 argument of type ***file*** & allows 1 of 2 optional arguments of type ***flag*** paired with a ***value***
 - *-head #* ~ the first # lines of a file
 - *-tail #* ~ the last # lines of a file
 ```
@@ -102,7 +102,7 @@ this is line 3!
 
 <br>
 
-'**write**' - applies string input to a file & outputs file & size change | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
+'**write**' - applies string input to a file & outputs file & size changes | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
 - *-appd* ~ appends string input to a newline at the end of the file
 - *-over* ~ overrides the file contents to string input only
 ```
