@@ -199,7 +199,7 @@ class Window(QWidget):
         self.today = str(time.localtime().tm_mday) + "/" + str(time.localtime().tm_mon) + "/" + str(time.localtime().tm_year)
         self.time_current = str(time.localtime().tm_hour) + ":" + str(time.localtime().tm_min) + "." + str(time.localtime().tm_sec)
 
-        self.parser = parser.command_parser()
+        self.parser = parser.command_parser(self.output)
         self.handler = handler.command_handler(self.output, self.session_start, [self.today, self.time_current])
 
         self.output.verticalScrollBar().rangeChanged.connect(self.auto_scroll)
@@ -295,6 +295,13 @@ class Window(QWidget):
 
         if len(user_in) > 0 and user_in.strip() != "":
             request = self.parser.parse(user_in)
+
+            try: #- check if command exists
+                self.parser.commands[user_in.split()[0]]
+            except:
+                self.output.append("")
+                self.output.append(f"'{user_in.split()[0]}' is not a valid command, use <b>help</b> for compatible commands")
+                self.output.append("")
 
             try:
                 self.handler.recieve_command(request, request["cmd"], user_in)

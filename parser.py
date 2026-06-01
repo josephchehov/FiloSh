@@ -3,6 +3,9 @@ import os
 from pathlib import Path
 
 class command_parser:
+    def __init__(self, output):
+        self.output = output
+
     def parse(self, raw):
         self.plain = raw
         self.flags = {
@@ -82,12 +85,20 @@ class command_parser:
                 return self.receivable
             else:
                 self.receivable = {}
+        #- command found but missing required arguments
+        self.output.append("")
+        self.output.append(f"'{self.cmd}' requires 1 or more arguments. Use <b>help</b> for more info")
+        self.output.append("")
         return
 
     def checktype_flag(self, index):
         if self.separate[index] in self.flags: #- flag exists
             if self.cmd in self.flags.get(self.separate[index]): #- flag matches command
                     return True
+        else:
+            self.output.append("")
+            self.output.append(f"'{self.separate[index]}' is not a valid flag for <b>{self.cmd}</b>")
+            self.output.append("")
         return False
     
     def checktype_file(self, index):
