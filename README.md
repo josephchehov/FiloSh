@@ -1,11 +1,12 @@
 # FiloSh
-Python3-based file management shell
+Python3-based file management shell.
+
+Version: 1.0
 
 ![Alt text](images/snippet.png)
 
 ## Commands
 Reference guide for up to date command descriptions and argument format, along with examples. <br>
-*ver 1.0*
 
 ##### Argument classifiers
 >
@@ -38,11 +39,21 @@ Session started: 1m 2s ago
 ```
 <br>
 
-'**log**' - saves successfully run command logs (in this session) to a new file in the current directory unless otherwise specified | allows 1 optional argument of type ***path***
+'**log**' - saves successfully run command logs (in this session) to a new file in the current working directory unless otherwise specified | allows 1 optional argument of type ***path***
 ```
 c:\Users\Name\Desktop\Filosh$: log c:\Users\Name\Desktop\Logs
 
 Log file saved at: 'c:\Users\Name\Desktop\Logs'
+```
+<br>
+
+'**history**' - outputs log data for a specific command in the session (if any) | requires 1 argument of type ***command***
+```
+c:\Users\Name\Desktop\Filosh$: history time
+
+[1] 'time -sesh' | 17:10:57
+
+'time' has been run a total of 1 times this session
 ```
 <br>
 
@@ -66,13 +77,13 @@ Current working directory has changed to: 'c:\Users\Name\Desktop'
 
 '**list**' - lists all files in the <u>current</u> working directory
 ```
-c:\Users\Name\Desktop\Filosh$: list
+c:\Users\Name\Desktop$: list
 
-example.txt  desktop.ini  file.lnk  file2.lnk
+receipts.txt  desktop.ini  file.lnk  file2.lnk
 ```
 <br>
 
-'**read**' - outputs all contents in a file unless specified | requires 1 argument of type ***file*** & allows 1 of 2 optional arguments of type ***flag*** paired with a ***value***
+'**read**' - outputs all contents in a file unless a span specified | requires 1 argument of type ***file*** & allows 1 of 2 optional arguments of type ***flag*** paired with a ***value***
 - *-head #* ~ the first # lines of a file
 - *-tail #* ~ the last # lines of a file
 ```
@@ -91,7 +102,7 @@ this is line 3!
 
 <br>
 
-'**write**' - applies string input to a file & outputs file & size change | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
+'**write**' - applies string input to a file & outputs file & size changes | requires 1 argument of type ***file***, 1 argument of type ***string*** & 1 of 2 arguments of type ***flag***
 - *-appd* ~ appends string input to a newline at the end of the file
 - *-over* ~ overrides the file contents to string input only
 ```
@@ -107,4 +118,43 @@ File contents overriden to:
 
 <br>
 
------- OTHER COMMANDS IN PROGRESS ------
+'**data**' - outputs a file's relevant metadata | requires 1 argument of type ***file***
+```
+c:\Users\Name\Desktop\Filosh$: data example.txt
+
+size: 14.0 bytes
+created: 2026-05-31 | 17:15:05
+modified: 2026-05-31 | 17:15:07
+accessed: 2026-05-31 | 17:15:07
+path: c:\Users\Name\Desktop\Filosh\example.txt
+extension: .txt
+type: file
+permissions: read: True | write: True | execute: True
+```
+<br>
+
+'**move**' - moves a file from one location to another | requires 1 argument of type ***file*** & 1 argument of type ***path***
+```
+c:\Users\Name\Desktop\Filosh$: move example.txt c:\Users\Name\Downloads
+
+File has been successfully moved to: c:\Users\Name\Downloads
+```
+<br>
+
+'**copy**' - copies a file from one location to another | requires 1 argument of type ***file*** & 1 argument of type ***path***
+```
+c:\Users\Name\Desktop\Filosh$: copy example.txt c:\Users\Name\Downloads
+
+File has been successfully copied to: c:\Users\Name\Downloads
+
+Metadata and permissions preserved
+```
+<br>
+
+'**delete**' - recycles a file unless otherwise instructed | allows 1 optional argument of type ***flag***
+- *-perm* ~ permanantly deletes
+```
+c:\Users\Name\Desktop\Filosh$: delete example.txt
+
+'example.txt' has been sent to the recycling bin
+```
